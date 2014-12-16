@@ -8,7 +8,7 @@
 		<title> Question </title>
 		<link> {{link}} </link>
 		<description> {{question.content}} </description>
-		<author> {{question.author}} </author>
+		<author> {{question.author.email()}} </author>
 		<pubDate> {{question.created|datetimetorfc(0)}} </pubDate>
 	</item>	
 
@@ -17,7 +17,7 @@
 			<title> Answer </title>
 			<link> {{link}} </link>
 			<description> {{answer.content}} </description>
-			<author> {{answer.author}} </author>
+			<author> {{answer.author.email()}} </author>
 			<pubDate> {{answer.created|datetimetorfc(0)}} </pubDate>
 		</item>
 	{% endfor %}
