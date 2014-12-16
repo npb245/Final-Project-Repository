@@ -1,0 +1,10 @@
+body {
+  font-family: Verdana, Helvetica, sans-serif;
+  background-color: #DDDDDD;
+  padding-top:70px; 
+}
+
+#tags {
+	font-size: 12px;
+	color: #36465D;
+}

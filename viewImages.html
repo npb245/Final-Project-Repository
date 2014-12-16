@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+  <link href="/stylesheets/bootstrap.css" rel="stylesheet">
+  <link href="/stylesheets/bootstrap-responsive.css" rel="stylesheet">
+  <style>
+  
+	i { height: 206px; width: 206px; display: inline-block; background-size: cover; background-position: 50% 25%; margin: 2px 3px 3px 2px; position: absolute; }
+	i:after {	
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  content: '';
+ 
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+   </style>
+ 
+  <script type="text/javascript" src="/js/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+   <script>  
+$(function() {
+
+var HEIGHTS = [];
+var COLUMN_WIDTH = 206;
+var MARGIN = 5;
+var DELTA = 20;
+
+function create_columns(n) {
+  HEIGHTS = [];
+  for (var i = 0; i < n; ++i) {
+    HEIGHTS.push(0);
+  }
+}
+
+function get_min_column() {
+  var min_height = Infinity;
+  var min_i = -1;
+  for (var i = 0; i < HEIGHTS.length; ++i) {
+    if (HEIGHTS[i] < min_height) {
+      min_height = HEIGHTS[i];
+      min_i = i;
+    }
+  }
+  return min_i;
+}
+
+function add_column_elem(i, elem, is_big) {
+  $(elem).css({
+    'margin-left': MARGIN + (COLUMN_WIDTH + MARGIN) * i,
+    'margin-top': HEIGHTS[Math.floor(i / 2)] * (COLUMN_WIDTH + MARGIN),
+
+    'width': is_big ? COLUMN_WIDTH * 2 + MARGIN : COLUMN_WIDTH,
+    'height': is_big ? COLUMN_WIDTH * 2 + MARGIN : COLUMN_WIDTH
+  });
+  $(elem).css('background-image', $(elem).css('background-image').replace(/w[0-9]+-h[0-9]+/, 'w' + $(elem).width() + '-h' + $(elem).height()));
+}
+
+function run() {
+  var size = window.innerWidth - 50;
+  var n_columns = Math.floor(size / (2 * (COLUMN_WIDTH + MARGIN)));
+  create_columns(n_columns);
+
+  var images = $('i');
+  var small_images = [];
+  for (var i = 0; i < images.length; ++i) {
+    var image = images[i];
+    var column = get_min_column();
+    if (Math.random() > 0.8) { // is big?
+      add_column_elem(column * 2, image, true);
+      HEIGHTS[column] += 2;
+    } else {
+      small_images.push(image);
+      if (small_images.length === 2) {
+        add_column_elem(column * 2, small_images[0], false);
+        add_column_elem(column * 2 + 1, small_images[1], false);
+        HEIGHTS[column] += 1;
+        small_images = [];
+      }
+    }
+  }
+  if (small_images.length) {
+    column = get_min_column();
+    add_column_elem(column * 2, small_images[0], false);
+  }
+}
+
+window.addEventListener('resize', run);
+$(run);
+
+});
+</script>
+   
+   
+  
+   
+   
+</head>
+  <body style="background:#7575A3;">
+	<div id="container" class="hfeed default" style="margin:0 auto;width:95%;background:#7575A3;" >	
+	
+	<div class="navbar navbar-fixed-top">
+	
+	<div class="navbar-inner">
+        <div class="container">
+          <div class="nav-collapse collapse">
+            <ul class="nav navbar-nav navbar-left">
+              <li>
+                <a href="/">
+                  Home
+                </a>
+              </li>
+			  </ul>
+			  <ul class="nav navbar-nav navbar-right">
+			  <li >
+                <a href="{{ url|safe }}">{{ url_linktext }}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+	
+	
+	{% for image in images %}
+		<a href="{{image.link}}" class="thumnbail">	
+		<i class="img-rounded" style="background-image: url({{image.link}});"> </i>
+		</a>	
+        
+			{% endfor %}
+	
+	</div>
+  </body>
+</html>
+{% endautoescape %}	

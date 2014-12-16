@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+  <link href="/stylesheets/bootstrap.css" rel="stylesheet">
+  <link href="/stylesheets/bootstrap-responsive.css" rel="stylesheet">
+  <script type="text/javascript" src="/js/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+</head>
+  <body>
+	<div id="create">
+	<a class="btn btn-primary" href="/create.html">Create a question </a>
+	
+	<a class="btn btn-primary" href="/upload.html">Upload an image </a>
+	{% if url_linktext == 'Logout' %}
+	<a class="btn btn-primary" href="/viewUploadedImages">View your images </a>
+	{% endif %}
+	</div>
+	<div id="container" class="hfeed default" style="margin:0 auto;width:60%;background:#fff;" >	
+		    <div class="navbar navbar-fixed-top">
+	
+	<div class="navbar-inner">
+        <div class="container">
+          <div class="nav-collapse collapse">
+            <ul class="nav navbar-nav navbar-left">
+              <li>
+                <a href="/">
+                  Home
+                </a>
+              </li>
+			  </ul>
+			  <ul class="nav navbar-nav navbar-right">
+              <li >
+                <a href="{{ url|safe }}">{{ url_linktext }}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+	
+	
+	<hr>
+	
+	{% for question in questions %}
+		
+        
+		<blockquote>
+		<a href="/view/{{question.key.id()}}">{{ question.content|truncateContent }}</a> 
+	
+		<div class="tags">
+		<footer> - {{question.author}}
+		<br>
+		Tags:
+		{% for tag in question.tags %}
+			<a class="tags" href="/tags/{{tag}}"> {{tag}} </a> 
+		{% endfor %}
+		
+		
+		</footer>
+		</div>	
+		</blockquote>
+		
+		
+		<hr>
+			
+    {% endfor %}
+	
+	<div class="pagination">
+		<span class="step-links">
+			{% if questions.has_previous() %}
+				<a href="?page={{ questions.previous_page_number() }}">previous</a>
+			{% endif %}
+			<span class="current">
+				Page {{ questions.number }} of {{ questions.paginator.num_pages }}
+			</span>
+
+			{% if questions.has_next() %}
+				<a href="?page={{questions.next_page_number()}}">next</a>
+			{% endif %}
+		</span>
+	</div>
+	
+	
+	
+	</div>
+  </body>
+</html>
+{% endautoescape %}

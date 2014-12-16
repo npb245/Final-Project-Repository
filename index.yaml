@@ -1,0 +1,20 @@
+indexes:
+- kind: Question
+  properties:
+  - name: created
+    direction: desc
+  - name: modified
+  - name: author
+  - name: content
+
+- kind: Question
+  properties:
+  - name: tags
+  - name: modified
+    direction: desc
+
+- kind: Answer
+  properties:
+  - name: q_id
+  - name: votes
+    direction: desc

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+  <link href="/stylesheets/bootstrap.css" rel="stylesheet">
+  <link href="/stylesheets/bootstrap-responsive.css" rel="stylesheet">
+  <script type="text/javascript" src="/js/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+   <script type="text/javascript">
+  
+	String.prototype.isEmpty = function() {
+    return (this.length === 0 || !this.trim());
+    };
+
+	function Validate(){
+		var ans = document.getElementById("content").value
+		if(ans.isEmpty()){
+			window.alert('Question cannot be empty!')
+			return false;
+		}
+		return true;
+	}
+  </script>
+</head>
+  <body>
+	
+	<div id="container" class="hfeed default" style="margin:0 auto;width:60%;background:#fff;" >	
+	<div class="navbar navbar-fixed-top">
+	
+	<div class="navbar-inner">
+        <div class="container">
+          <div class="nav-collapse collapse">
+            <ul class="nav navbar-nav navbar-left">
+              <li>
+                <a href="/">
+                  Home
+                </a>
+              </li>
+			  </ul>
+			  <ul class="nav navbar-nav navbar-right">
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+	
+	
+    <hr>
+    
+	<form action="/addquestion" method="post" onsubmit="return Validate()">
+		Question:
+      <div><textarea class="input-block-level" id="content" name="content" rows="5"> </textarea></div>
+	  Tags (enter tags as comma-separated values):
+	  <div><textarea class="input-block-level" name="tags" rows="2"> </textarea></div>
+	  <div><input type="submit" value="Add question"></div>
+    </form>
+	</div>
+  </body>
+</html>
+{% endautoescape %}	

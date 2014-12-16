@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+	<title>Question Feed</title>
+	<link> {{link}} </link>
+	<description> Question by {{question.author}} </description>
+	<item>
+		<title> Question </title>
+		<link> {{link}} </link>
+		<description> {{question.content}} </description>
+		<author> {{question.author}} </author>
+		<pubDate> {{question.created|datetimetorfc(0)}} </pubDate>
+	</item>	
+
+	{% for answer in answers %}
+		<item>
+			<title> Answer </title>
+			<link> {{link}} </link>
+			<description> {{answer.content}} </description>
+			<author> {{answer.author}} </author>
+			<pubDate> {{answer.created|datetimetorfc(0)}} </pubDate>
+		</item>
+	{% endfor %}
+ 
+</channel>
+</rss>

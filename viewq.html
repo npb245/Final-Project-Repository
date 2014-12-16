@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+   <link href="/stylesheets/bootstrap.css" rel="stylesheet">
+  <link href="/stylesheets/bootstrap-responsive.css" rel="stylesheet">
+  <script type="text/javascript" src="/js/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+  <script type="text/javascript">
+  
+	String.prototype.isEmpty = function() {
+    return (this.length === 0 || !this.trim());
+    };
+
+	function Validate(){
+		var ans = document.getElementById("content").value
+		if(ans.isEmpty()){
+			window.alert('Answer cannot be empty!')
+			return false;
+		}
+		return true;
+	}
+  </script>
+</head>
+  <body>
+	<div id="container" class="hfeed default" style="margin:0 auto;width:70%;background:#fff;" >	
+		    <div class="navbar navbar-fixed-top">
+	
+		<div class="navbar-inner">
+			<div class="container">
+			  <div class="nav-collapse collapse">
+				<ul class="nav navbar-nav navbar-left">
+				  <li>
+					<a href="/">
+					  Home
+					</a>
+				  </li>
+				  </ul>
+				  <ul class="nav navbar-nav navbar-right">
+				  <li >
+					<a href="{{ url|safe }}">{{ url_linktext }}</a>
+				  </li>
+				</ul>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		
+		<div>
+		<h3> Question: 
+		<a href="/generateRSS?ques={{question.key.id()}}">
+		<img src="/img/rss-icon.png" width=50px height=50px align="right">
+		</a>
+		</h3>
+		</div>
+		<table class="table">
+			<tbody>
+				<tr>
+					<td align="center" style="padding:15px;">
+						<a href="/voteq?quest={{question.key.urlsafe()}}&type=up">
+						  <img src="/img/thumbs_up.ico" width=30px height=40px>
+						</a>
+						<br>
+						<h3  style="margin: 0px 0px -20px;">&nbsp;{{ question.votes}} </h3>
+						<br>
+						<a href="/voteq?quest={{question.key.urlsafe()}}&type=down">
+						<img src="/img/thumbs_down.ico" width=30px height=30px>
+						</a>
+					</td>
+					<td style="width:500px;">
+						<div class="qcontent">{{ question.content | safe }}
+						
+						</div>
+						Tags:
+						{% for tag in question.tags %}
+							{% if tag %}
+								<a class="tags" href="/tags/{{tag}}"> {{tag}} </a>
+							{% endif %} 
+						{% endfor %}
+					</td>
+					<td align="center" style="padding:30px; align:center;">
+						{% if question.author is currentUser %}
+							<a class="btn" href="/editquestion?quest={{question.key.urlsafe()}}">Edit</a>
+						{% endif %} 
+						<br><br>
+						<p><small>Created {{question.created|datetimetorfc(5)}} 
+							<br> Modified {{question.modified|datetimetorfc	(5)}}
+							<br>- by {{question.author}}
+							</small>
+							
+						</p>
+					</td>
+				</tr>
+				
+			</tbody>
+		</table>
+		
+		<h3> Answers: </h3>
+		
+		
+		<table class="table">
+			<tbody>
+				 {% for answer in answers %}
+				<tr>
+					<td align="center" style="padding:15px;">
+						<a href="/voteans?ans={{answer.key.urlsafe()}}&type=up"><img src="/img/thumbs_up.ico" width=30px height=30px></a>
+						<br>
+						<h3  style="margin: 0px 0px -20px;">&nbsp;{{ answer.votes}} </h3>
+						<br>
+						<a href="/voteans?ans={{answer.key.urlsafe()}}&type=down"><img src="/img/thumbs_down.ico" width=30px height=30px></a>
+					</td>
+					<td style="width:500px;">
+						<div class="qcontent">{{ answer.content|safe }}
+						
+						</div>
+					</td>
+					<td align="center" style="padding:30px;">
+						{% if answer.author is currentUser %}
+							<a class="btn" href="/editanswer?ans={{answer.key.urlsafe()}}">Edit</a>
+						{% endif %}
+						<br><br>
+						<p><small>Created {{answer.created|datetimetorfc(5)}} 
+							<br>Modified {{answer.modified|datetimetorfc(5)}}
+							<br>- by {{answer.author}}</small>
+						</p>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	
+
+	<div class="pagination">
+		<span class="step-links">
+			{% if answers.has_previous() %}
+				<a href="?page={{ answers.previous_page_number() }}">previous</a>
+			{% endif %}
+			<span class="current">
+				Page {{ answers.number }} of {{ answers.paginator.num_pages }}
+			</span>
+
+			{% if answers.has_next() %}
+				<a href="?page={{answers.next_page_number()}}">next</a>
+			{% endif %}
+		</span>
+	</div>
+	
+
+   {% if url_linktext == 'Logout' %}
+	<hr>
+	<form action="/addanswer" method="post" onsubmit="return Validate()">
+      <div><textarea class="input-block-level" id="content" name="content" rows="5"></textarea></div>
+	  <input type="hidden" value={{question.key.urlsafe()}} name="q_id">
+      <div><input type="submit" value="Add answer"></div>
+    </form>
+	{% endif%}
+	<p>
+	
+	</p>
+	</div>
+  </body>
+</html>
+{% endautoescape %}	

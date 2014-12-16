@@ -1,0 +1,25 @@
+application: npb-question-app
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /stylesheets
+  static_dir: stylesheets
+- url: /js
+  static_dir: js
+- url: /img
+  static_dir: img
+- url: /fonts
+  static_dir: fonts
+- url: /.*
+  script: question.application
+  
+libraries:
+- name: webapp2
+  version: latest
+- name: jinja2
+  version: latest
+- name: django
+  version: latest

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+  <link href="/stylesheets/bootstrap.css" rel="stylesheet">
+  <link href="/stylesheets/bootstrap-responsive.css" rel="stylesheet">
+  <script type="text/javascript" src="/js/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+  <script type="text/javascript">
+	
+	var _validFileExtensions = [".jpg", ".jpeg", ".gif", ".png"];
+
+	function Validate(oForm) {
+		var oInput = document.getElementById("tags");
+			var blnValid = false;
+			if (oInput.type == "file") {
+				var sFileName = oInput.value;
+				
+				if (sFileName.length > 0) {
+					blnValid = false;
+					for (var j = 0; j < _validFileExtensions.length; j++) {
+						var sCurExtension = _validFileExtensions[j];
+						if (sFileName.substr(sFileName.length - sCurExtension.length, sCurExtension.length).toLowerCase() == sCurExtension.toLowerCase()) {
+							blnValid = true;
+							break;
+						}
+					}
+			
+			}
+		}
+		if (!blnValid) {
+					
+						alert("Sorry, invalid file, allowed extensions are: " + _validFileExtensions.join(", "));
+						return false;
+					}
+		return true;
+	}
+</script>
+  </script>
+</head>
+  <body>
+	
+	<div id="container" class="hfeed default" style="margin:0 auto;width:60%;background:#fff;" >	
+	<div class="navbar navbar-fixed-top">
+	
+	<div class="navbar-inner">
+        <div class="container">
+          <div class="nav-collapse collapse">
+            <ul class="nav navbar-nav navbar-left">
+              <li>
+                <a href="/">
+                  Home
+                </a>
+              </li>
+			  </ul>
+			  <ul class="nav navbar-nav navbar-right">
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    
+	<form role="form" enctype="multipart/form-data" action="/upload.html" method="post" onsubmit="return Validate(this)">
+		 <label for="exampleInputFile">Select an Image to upload:</label><br>
+      
+	  <input id="tags" name="image" accept="image/*" type="file" placeholder="tags">
+	  <br><br>
+	  <div><input type="submit" value="Upload Image"></div>
+    </form>
+	</div>
+  </body>
+</html>
+{% endautoescape %}	

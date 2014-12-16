@@ -1,0 +1,27 @@
+body {
+  font-family: Verdana, Helvetica, sans-serif;
+  background-color: #DDDDDD;
+  padding-top:70px;
+  padding-bottom:40px;
+ 
+}
+
+a{
+	#color: #36465D;
+	font-size: 16px;
+}
+.tags {
+	font-size: 12px;
+	color: #36465D;
+
+}
+.qcontent {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+#create {
+	padding-left:5%;
+}
+
+
