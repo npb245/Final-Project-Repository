@@ -520,30 +520,6 @@ class editAnswer(webapp2.RequestHandler):
 		sleep(0.1)
 		redir_url = 'view/'+str(ans.q_id.id())
 		self.redirect(redir_url)
-
-#Generate RSS feed for a question
-class GenerateRSS(webapp2.RequestHandler):
-	"""docstring for GenerateRSS"""
-	def get(self):
-		q_id = self.request.get('ques')
-		q_key = ndb.Key(Question,int(q_id))
-		ques = q_key.get()
-		
-		a_query = Answer.query(Answer.q_id == q_key)
-		ans = a_query.fetch()
-
-		link = self.request.host_url + '/view/' + str(q_id)
-
-		template_values = {
-			'question': ques,
-			'answers': ans,
-			'link': link, 
-		}
-				
-		template = JINJA_ENVIRONMENT.get_template('rss.xml')
-		self.response.headers['Content-type']='text/xml'
-		self.response.write(template.render(template_values))
-
 	
 application = webapp2.WSGIApplication([
     ('/', MainPage),
