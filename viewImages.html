@@ -2,9 +2,10 @@
 {% autoescape true %}
 <html>
 <head>
-  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+  
   <link href="/stylesheets/bootstrap.css" rel="stylesheet">
   <link href="/stylesheets/bootstrap-responsive.css" rel="stylesheet">
+  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
   <style>
   
 	i { height: 206px; width: 206px; display: inline-block; background-size: cover; background-position: 50% 25%; margin: 2px 3px 3px 2px; position: absolute; }
@@ -116,6 +117,7 @@ $(run);
               </li>
 			  </ul>
 			  <ul class="nav navbar-nav navbar-right">
+			    <li class="divider-vertical"> </li>
 			  <li >
                 <a href="{{ url|safe }}">{{ url_linktext }}</a>
               </li>

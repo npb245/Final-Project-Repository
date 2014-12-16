@@ -2,8 +2,9 @@
 {% autoescape true %}
 <html>
 <head>
-  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+	
    <link href="/stylesheets/bootstrap.css" rel="stylesheet">
+   <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
   <link href="/stylesheets/bootstrap-responsive.css" rel="stylesheet">
   <script type="text/javascript" src="/js/jquery-2.1.1.min.js"></script>
   <script type="text/javascript" src="/js/bootstrap.js"></script>
@@ -24,7 +25,7 @@
   </script>
 </head>
   <body>
-	<div id="container" class="hfeed default" style="margin:0 auto;width:70%;background:#fff;" >	
+	<div id="container" class="hfeed default" style="margin:0 auto;width:70%;" >	
 		    <div class="navbar navbar-fixed-top">
 	
 		<div class="navbar-inner">
@@ -38,6 +39,7 @@
 				  </li>
 				  </ul>
 				  <ul class="nav navbar-nav navbar-right">
+				    <li class="divider-vertical"> </li>
 				  <li >
 					<a href="{{ url|safe }}">{{ url_linktext }}</a>
 				  </li>
@@ -49,7 +51,9 @@
 		
 		<div>
 		<h3> Question: 
-		
+		<a href="/generateRSS?ques={{question.key.id()}}">
+		<img src="/img/rss-icon.png" width=50px height=50px align="right">
+		</a>
 		</h3>
 		</div>
 		<table class="table">
@@ -70,16 +74,17 @@
 						<div class="qcontent">{{ question.content | safe }}
 						
 						</div>
-						Tags:
+						<div style="font-size: 12px;color: #DDA0DD;"> Tags: 
 						{% for tag in question.tags %}
 							{% if tag %}
 								<a class="tags" href="/tags/{{tag}}"> {{tag}} </a>
 							{% endif %} 
 						{% endfor %}
+						</div>
 					</td>
 					<td align="center" style="padding:30px; align:center;">
 						{% if question.author is currentUser %}
-							<a class="btn" href="/editquestion?quest={{question.key.urlsafe()}}">Edit</a>
+							<a class="btn btn-custom" href="/editquestion?quest={{question.key.urlsafe()}}">Edit</a>
 						{% endif %} 
 						<br><br>
 						<p><small>Created {{question.created|datetimetorfc(5)}} 
@@ -115,7 +120,7 @@
 					</td>
 					<td align="center" style="padding:30px;">
 						{% if answer.author is currentUser %}
-							<a class="btn" href="/editanswer?ans={{answer.key.urlsafe()}}">Edit</a>
+							<a class="btn btn-custom" href="/editanswer?ans={{answer.key.urlsafe()}}">Edit</a>
 						{% endif %}
 						<br><br>
 						<p><small>Created {{answer.created|datetimetorfc(5)}} 
@@ -132,14 +137,14 @@
 	<div class="pagination">
 		<span class="step-links">
 			{% if answers.has_previous() %}
-				<a href="?page={{ answers.previous_page_number() }}">previous</a>
+				<a class="tags" href="?page={{ answers.previous_page_number() }}">previous</a>
 			{% endif %}
 			<span class="current">
 				Page {{ answers.number }} of {{ answers.paginator.num_pages }}
 			</span>
 
 			{% if answers.has_next() %}
-				<a href="?page={{answers.next_page_number()}}">next</a>
+				<a class="tags" href="?page={{answers.next_page_number()}}">next</a>
 			{% endif %}
 		</span>
 	</div>
@@ -150,7 +155,7 @@
 	<form action="/addanswer" method="post" onsubmit="return Validate()">
       <div><textarea class="input-block-level" id="content" name="content" rows="5"></textarea></div>
 	  <input type="hidden" value={{question.key.urlsafe()}} name="q_id">
-      <div><input type="submit" value="Add answer"></div>
+      <div><input type="submit" class="btn btn-custom2" value="Add answer"></div>
     </form>
 	{% endif%}
 	<p>
