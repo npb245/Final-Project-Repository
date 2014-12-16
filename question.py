@@ -556,7 +556,7 @@ application = webapp2.WSGIApplication([
 	('/voteans',VoteAnswer),
 	('/editquestion',editQuestion),
 	('/editanswer',editAnswer),
-	('/generateRSS',GenerateRSS),
+	
 	(r'/view/(\d+)',ViewQuestion),
 	(r'/images/(.*)',ViewImage),
 	(r'/tags/(.*)',ViewQuestionByTag),
