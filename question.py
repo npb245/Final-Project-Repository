@@ -59,6 +59,16 @@ def currentUser(author):
 	else:
 		return False	
 
+def tagsPresent(tags):
+	if not tags:
+		logging.debug('tags are %s',','.join(tags))
+		return False
+	if str(tags[0]) == '' or str(tags[0]).isspace():
+		logging.debug('tags are %s',','.join(tags))
+		return False
+	return True	
+
+
 def notEmpty(tag):
 	if str(tag).isspace():
 		return False
@@ -82,6 +92,8 @@ JINJA_ENVIRONMENT.filters['truncateContent'] = truncateContent
 JINJA_ENVIRONMENT.filters['hashTag'] = hashTag
 JINJA_ENVIRONMENT.tests['currentUser'] = currentUser
 JINJA_ENVIRONMENT.tests['notEmpty'] = notEmpty
+JINJA_ENVIRONMENT.tests['tagsPresent'] = tagsPresent
+
 
 #Display Main page with list of questions
 class MainPage(webapp2.RequestHandler):
@@ -89,6 +101,8 @@ class MainPage(webapp2.RequestHandler):
 	
 		q_query = Question.query().order(-Question.modified)
 		que = q_query.fetch()
+
+
 
 		paginator=Paginator(que, 10)
 
@@ -520,6 +534,30 @@ class editAnswer(webapp2.RequestHandler):
 		sleep(0.1)
 		redir_url = 'view/'+str(ans.q_id.id())
 		self.redirect(redir_url)
+
+#Generate RSS feed for a question
+class GenerateRSS(webapp2.RequestHandler):
+	"""docstring for GenerateRSS"""
+	def get(self):
+		q_id = self.request.get('ques')
+		q_key = ndb.Key(Question,int(q_id))
+		ques = q_key.get()
+		
+		a_query = Answer.query(Answer.q_id == q_key)
+		ans = a_query.fetch()
+
+		link = self.request.host_url + '/view/' + str(q_id)
+
+		template_values = {
+			'question': ques,
+			'answers': ans,
+			'link': link, 
+		}
+				
+		template = JINJA_ENVIRONMENT.get_template('rss.xml')
+		self.response.headers['Content-type']='text/xml'
+		self.response.write(template.render(template_values))
+
 	
 application = webapp2.WSGIApplication([
     ('/', MainPage),
@@ -532,7 +570,7 @@ application = webapp2.WSGIApplication([
 	('/voteans',VoteAnswer),
 	('/editquestion',editQuestion),
 	('/editanswer',editAnswer),
-	
+	('/generateRSS',GenerateRSS),
 	(r'/view/(\d+)',ViewQuestion),
 	(r'/images/(.*)',ViewImage),
 	(r'/tags/(.*)',ViewQuestionByTag),
