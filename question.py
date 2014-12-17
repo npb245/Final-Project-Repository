@@ -59,6 +59,16 @@ def currentUser(author):
 	else:
 		return False	
 
+def tagsPresent(tags):
+	if not tags:
+		logging.debug('tags are %s',','.join(tags))
+		return False
+	if str(tags[0]) == '' or str(tags[0]).isspace():
+		logging.debug('tags are %s',','.join(tags))
+		return False
+	return True	
+
+
 def notEmpty(tag):
 	if str(tag).isspace():
 		return False
@@ -82,6 +92,8 @@ JINJA_ENVIRONMENT.filters['truncateContent'] = truncateContent
 JINJA_ENVIRONMENT.filters['hashTag'] = hashTag
 JINJA_ENVIRONMENT.tests['currentUser'] = currentUser
 JINJA_ENVIRONMENT.tests['notEmpty'] = notEmpty
+JINJA_ENVIRONMENT.tests['tagsPresent'] = tagsPresent
+
 
 #Display Main page with list of questions
 class MainPage(webapp2.RequestHandler):
@@ -89,6 +101,8 @@ class MainPage(webapp2.RequestHandler):
 	
 		q_query = Question.query().order(-Question.modified)
 		que = q_query.fetch()
+
+
 
 		paginator=Paginator(que, 10)
 

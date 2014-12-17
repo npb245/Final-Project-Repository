@@ -54,12 +54,13 @@
 	
 		<div style="font-size: 12px;color: #DDA0DD;">
 		<footer><br><div class="author"> - {{question.author}} </div>
-		
+		{% if question.tags is tagsPresent %}
 		Tags:
 		{% for tag in question.tags %}
+			
 			<a class="tags" href="/tags/{{tag}}"> {{tag}} </a> 
 		{% endfor %}
-		
+		{% endif %}
 		
 		</footer>
 		</div>	

@@ -76,13 +76,16 @@
 						<div class="qcontent" style="width:500px;display:block;overflow:hidden;">{{ question.content | safe }}
 						
 						</div>
-						<div style="font-size: 12px;color: #DDA0DD;"> Tags: 
+						<div style="font-size: 12px;color: #DDA0DD;">
+						{% if question.tags is tagsPresent %}
+						Tags: 
 						{% for tag in question.tags %}
 							{% if tag %}
 								<a class="tags" href="/tags/{{tag}}"> {{tag}} </a>
 							{% endif %} 
 						{% endfor %}
 						</div>
+						{% endif %}
 					</td>
 					<td align="center" style="padding:30px; align:center;">
 						{% if question.author is currentUser %}
