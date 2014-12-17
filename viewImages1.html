@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+<head>
+  <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+  <link href="/stylesheets/bootstrap.css" rel="stylesheet">
+  <link href="/stylesheets/bootstrap-responsive.css" rel="stylesheet">
+  <script type="text/javascript" src="/js/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+  <script src="/js/drag.js" type="text/javascript"></script>
+	<script src="/js/sugar-1.2.5.min.js"></script>
+
+ 
+  
+<style>
+
+
+img:hover {
+  cursor: pointer;
+}
+
+i {
+  margin: 2px;
+  display: inline-block;
+  background-size: cover;
+  background-position: center 25%;
+  position: absolute;
+
+  -webkit-transition-property: margin-left, margin-top, width, height;
+  -webkit-transition-duration: 500ms;
+}
+
+</style>
+<script>
+
+var IMAGES = [
+	{big: false, src: "http://lorempixel.com/207/207?3278212"},
+/**/
+]
+
+ {% for image in images %}
+	var tp='{{image.link}}'
+	var b1={big:false, src:tp}
+	IMAGES.push(b1)
+{% endfor %}
+
+var PRIORITY_IMAGE = null;
+
+IMAGES_BY_ID = [];
+
+for (var i = 0; i < IMAGES.length; ++i) {
+  IMAGES[i].dom = $('<i>')
+    .css('background-image', 'url(' + IMAGES[i].src + ')')
+    .attr('draggable', true)
+    .attr('id', i)
+    .appendTo('#container');
+  
+  IMAGES_BY_ID[i] = IMAGES[i];
+}
+
+function getColumn(HEIGHT) {
+  return HEIGHT[0] <= HEIGHT[1] ? 0 : 1;
+}
+
+function renderBlock(HEIGHT, column, image) {
+  image.dom.css({
+    'margin-left': column * 422,
+    'margin-top': HEIGHT[column] * 211,
+    'width': 418,
+    'height': 418
+  });
+
+  HEIGHT[column] += 2;
+}
+
+function renderImage(HEIGHT, column, images) {
+  for (var i = 0; i < images.length; ++i) {
+    images[i].dom.css({
+      'margin-left': column * 422 + i * 211,
+      'margin-top': HEIGHT[column] * 211,
+      'width': 207,
+      'height': 207
+    });
+  }
+
+  HEIGHT[column] += 1;
+}
+
+LAST_IMAGES = null;
+function render(IMAGES) {
+  LAST_IMAGES = IMAGES;
+
+  var HEIGHT = [];
+  HEIGHT[0] = 0;
+  HEIGHT[1] = Math.ceil($('#text').height() / 211);
+
+  var small_images = [];
+  for (var i = 0; i < IMAGES.length; ++i) {
+    var column = getColumn(HEIGHT);
+
+    var image = IMAGES[i];
+    if (image.big) {
+      renderBlock(HEIGHT, column, image);
+    } else {
+      small_images.push(image);
+      if (small_images.length === 2) {
+        renderImage(HEIGHT, column, small_images);
+        small_images = [];
+      }
+    }
+  }
+
+  if (small_images.length) {
+    var column = getColumn(HEIGHT);
+    renderImage(HEIGHT, column, small_images);
+  }
+}
+
+function in_block(HEIGHT, x, y, column) {
+  return y === HEIGHT[column] &&
+         Math.floor(x / 2) === column;
+}
+
+function in_big_block(HEIGHT, x, y, column) {
+  return (y === HEIGHT[column] || y === HEIGHT[column] + 1) &&
+         Math.floor(x / 2) === column;
+}
+
+function insert_before(IMAGES, elem, target) {
+  IMAGES.remove(elem);
+  IMAGES.splice(IMAGES.indexOf(target), 0, elem);
+}
+
+function insert_after(IMAGES, elem, target) {
+  IMAGES.remove(elem);
+  IMAGES.insert(elem, IMAGES.indexOf(target) + 1);
+}
+function next_small(IMAGES, i) {
+  for (; i < IMAGES.length; ++i) {
+    if (!IMAGES[i].big) {
+      return IMAGES[i];
+    }
+  }
+  return null;
+}
+
+function insert(IMAGES, img, x, y) {
+
+  IMAGES.remove(img);
+
+  var HEIGHT = [];
+  HEIGHT[0] = 0;
+  HEIGHT[1] = Math.ceil($('#text').height() / 211);
+
+  var small_images = [];
+  for (var i = 0; i < IMAGES.length; ++i) {
+    var image = IMAGES[i];
+    var column = getColumn(HEIGHT);
+    if (image.big) {
+      if (in_big_block(HEIGHT, x, y, column)) {
+        var next = next_small(IMAGES, i);
+        if (!next) {
+          HEIGHT[column] += 2;
+          continue;
+        }
+        IMAGES.remove(next);
+        IMAGES.splice(i, 0, next);
+        i--;
+        continue;
+      }
+
+      HEIGHT[column] += 2;
+    } else {
+      small_images.push(image);
+      if (small_images.length === 2) {
+
+        if (in_block(HEIGHT, x, y, column)) {
+          var pos = img.big ? 0 : x % 2;
+          insert_before(IMAGES, img, small_images[pos]);
+          return IMAGES;
+        }
+
+        HEIGHT[column] += 1;
+        small_images = [];
+      }
+    }
+  }
+
+  if (small_images.length) {
+    var n = x % 2;
+    if (in_block(HEIGHT, x, y, column) && n == 0) {
+      insert_before(IMAGES, img, small_images[n]);
+      return IMAGES;
+    }
+  }
+  IMAGES.push(img);
+  return IMAGES;
+}
+
+$('i').click(function () {
+  if (+new Date() < DRAG_TIME) {
+    return;
+  }
+  var image = IMAGES_BY_ID[$(this).attr('id')];
+  image.big = !image.big;
+  render(IMAGES);
+});
+
+function print(IMAGES) {
+  console.log(IMAGES.map(function (image) {
+    return +image.dom.attr('id');
+  }));
+}
+
+DRAG_TIME = 0;
+
+$('i').on('drag', function (event) {
+  var original = this;
+
+  var x = event.offsetX + 211/2;
+  var y = event.offsetY + 211/2;
+
+  var images = insert(
+    IMAGES.concat(),
+    PRIORITY_IMAGE,
+    Math.floor(x / 211),
+    Math.floor(y / 211)
+  );
+  DRAG_IMAGES = images;
+  render(images);
+});
+
+$('i')
+  .bind('dragstart',function( event ){
+    PRIORITY_IMAGE = IMAGES_BY_ID[$(this).attr('id')];
+
+    var proxy = $(this).clone()
+      .css('margin-left', 0)
+      .css('margin-top', 0)
+      .css('width', $(this).width())
+      .css('height', $(this).height())
+      .css('position', 'absolute')
+      .appendTo('body');
+    $(this).css('visibility', 'hidden');
+    return proxy;
+  })
+  .bind('drag',function( event ){
+    $(event.dragProxy).css({
+      top: event.offsetY,
+      left: event.offsetX
+    });
+  })
+  .bind('dragend',function( event ){
+    $(this).css('visibility', 'visible');
+    IMAGES = DRAG_IMAGES;
+    $(event.dragProxy).remove();
+  });
+
+$('#text').keydown(function () { render(LAST_IMAGES); });
+$('#text').keyup(function () { render(LAST_IMAGES); });
+
+render(IMAGES);
+
+</script>   
+   
+  
+   
+   
+</head>
+  <body style="background:#7575A3;">
+	<div id="container" class="hfeed default" style="margin:0 auto;width:95%;background:#7575A3;" >	
+	
+	<div class="navbar navbar-fixed-top">
+	
+	<div class="navbar-inner">
+        <div class="container">
+          <div class="nav-collapse collapse">
+            <ul class="nav navbar-nav navbar-left">
+              <li>
+                <a href="/">
+                  Home
+                </a>
+              </li>
+			  </ul>
+			  <ul class="nav navbar-nav navbar-right">
+			  <li >
+                <a href="{{ url|safe }}">{{ url_linktext }}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+	
+	<div id="container" style="width: 844px;">
+  <div style="float: right; width: 420px; text-align: center; border: 1px solid #333; margin-top: 2px; height: 0; display: none;" id="text" contentEditable="true">
+    <br /><br /><br /><br /><br />
+    Press Enter in the box to expand
+    <br /><br /><br /><br /><br />
+  </div>
+</div>
+	</div>
+  </body>
+</html>
+{% endautoescape %}	

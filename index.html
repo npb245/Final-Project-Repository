@@ -2,7 +2,8 @@
 {% autoescape true %}
 <html>
 <head>
-  
+	<title> Questions Home </title>
+  <link rel="shortcut icon" href="/img/favicon.ico">
   <link href="/stylesheets/bootstrap.css" rel="stylesheet">
   <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
   <link href="/stylesheets/bootstrap-responsive.css" rel="stylesheet">
@@ -18,7 +19,7 @@
 	<a class="btn btn-custom" href="/viewUploadedImages">View your images </a>
 	{% endif %}
 	</div>
-	<div id="container" class="hfeed default" style="margin:0 auto;width:60%;" >	
+	<div id="container" class="hfeed default" style="display:block;margin:0 auto;width:80%;" >	
 		    <div class="navbar  navbar-fixed-top">
 	
 	<div class="navbar-inner">
@@ -44,11 +45,10 @@
     </div>
 	
 	
-	<hr>
-	
+	<hr style="max-width:90%">
 	{% for question in questions %}
 		
-        
+        <div style="display:block;overflow:hidden;">
 		<blockquote>
 		<a class="questions" href="/view/{{question.key.id()}}">{{ question.content|truncateContent }}</a> 
 	
@@ -64,9 +64,9 @@
 		</footer>
 		</div>	
 		</blockquote>
+		</div>
 		
-		
-		<hr>
+		<hr style="max-width:90%">
 			
     {% endfor %}
 	
